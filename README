@@ -16,7 +16,7 @@ Setup
 
 It would be a good idea to minimize the StarBurst.js file but of course not required at all.
 
-Make sure 
+Make sure include the star.png file in correct directory
 
 The basic use is shown by the following...
 
