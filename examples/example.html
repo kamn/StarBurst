@@ -1,0 +1,107 @@
+<html>
+	<head>
+		<script src="Three.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="../StarBurst.js"></script>
+		<script>
+			var JSONArr = [];
+			JSONArr.push({name:"Sol",x:0,y:0,z:0,type:"F"});
+			JSONArr.push({name:"Gliese 876",x:-2.033,y:-0.2715,z:14.8591,type:"M"});
+			JSONArr.push({name:"82 G. Eridani",x:5.8323,y:9.447,z:-16.6355,type:"G"});
+			JSONArr.push({name:"Gliese 581",x:5.5385,y:-14.024,z:13.1397,type:"M"});
+			JSONArr.push({name:"61 Virginis",x:18.0382,y:4.0575,z:-21.0276,type:"G"});
+			JSONArr.push({name:"55 Cancri",x:-31.3494,y:-22.356,z:10.8362,type:"G"});
+			JSONArr.push({name:"HD 69830",x:28.169,y:20.088,z:-21.9995,type:"K"});
+			JSONArr.push({name:"HD 40307",x:-36.8713,y:15.5118,z:-12.802,type:"K"});
+			JSONArr.push({name:"Upsilon Andromedae",x:33.0031,y:-28.2504,z:-6.9794,type:"F"});
+			JSONArr.push({name:"47 Ursae Majoris",x:-21.4524,y:21.9318,z:34.2752,type:"G"});
+			JSONArr.push({name:"Nu2 Lupi",x:-11.0515,y:27.9836,z:-36.108,type:"G"});
+			JSONArr.push({name:"Mu Arae",x:-32.6381,y:-19.1669,z:34.1817,type:"G"});
+			JSONArr.push({name:"HD 113538",x:-8.2689,y:-1.86,z:51.3046,type:"K"});
+			JSONArr.push({name:"Gliese 777",x:0.8595,y:38.8895,z:-34.509,type:"G"});
+			JSONArr.push({name:"HD 128311",x:43.4877,y:-23.0122,z:22.2544,type:"K"});
+			JSONArr.push({name:"14 Herculis",x:10.3082,y:29.9153,z:-47.4112,type:"K"});
+			JSONArr.push({name:"83 Leonis B",x:3.8747,y:-58.2809,z:8.3261,type:"K"});
+			JSONArr.push({name:"HD 217107",x:26.8115,y:3.5809,z:59.1043,type:"G"});
+			JSONArr.push({name:"HD 215152",x:-69.3839,y:-9.2667,z:0,type:"G"});
+			JSONArr.push({name:"32 G. Cet",x:-11.058,y:0,z:75.1912,type:"G"});
+			JSONArr.push({name:"HD 134060",x:-7.4897,y:18.9647,z:-76.3233,type:"G"});
+			JSONArr.push({name:"HD 60532",x:19.9988,y:80.5513,z:-0.7347,type:"F"});
+			JSONArr.push({name:"269 G. Hya",x:5.4509,y:-81.9884,z:-11.713,type:"G"});
+			JSONArr.push({name:"HD 39194",x:58.3725,y:-24.5574,z:-55.1869,type:"K"});
+			JSONArr.push({name:"23 Librae",x:30.9475,y:-78.3626,z:-11.2499,type:"G"});
+			JSONArr.push({name:"HIP 57274",x:-0.8698,y:13.0825,z:-83.9827,type:"K"});
+			JSONArr.push({name:"HD 181433",x:55.0814,y:-67.3031,z:-2.31,type:"K"});
+			JSONArr.push({name:"HD 134606",x:24.0923,y:-61.0045,z:-57.1578,type:"G"});
+			JSONArr.push({name:"HD 82943",x:-75.6497,y:6.7113,z:-48.2916,type:"G"});
+			JSONArr.push({name:"HD 114386",x:-80.2313,y:-18.0471,z:-38.9646,type:"K"});
+			JSONArr.push({name:"HD 13808",x:4.0692,y:-26.0649,z:89.18,type:"K"});
+			JSONArr.push({name:"HD 21693",x:15.6465,y:25.3438,z:100.687,type:"G"});
+			JSONArr.push({name:"HD 11964",x:68.2053,y:-58.3833,z:-58.2103,type:"G"});
+			JSONArr.push({name:"HD 45364",x:-43.8563,y:87.5021,z:-43.232,type:"G"});
+			JSONArr.push({name:"HD 37124",x:41.3765,y:-17.4071,z:100.424,type:"G"});
+			JSONArr.push({name:"HD 65216",x:-26.6068,y:-107.1669,z:18.7438,type:"G"});
+			JSONArr.push({name:"HD 12661",x:17.43,y:-111.6447,z:-15.0881,type:"G"});
+			JSONArr.push({name:"HD 51608",x:-14.4896,y:28.9096,z:109.3174,type:"K"});
+			JSONArr.push({name:"HD 20781",x:-25.1403,y:-40.7216,z:-104.5692,type:"G"});
+			JSONArr.push({name:"HD 169830",x:-87.6285,y:15.6714,z:-78.9724,type:"F"});
+			JSONArr.push({name:"64 G. Gru",x:80.3385,y:10.7298,z:93.8435,type:"G"});
+			JSONArr.push({name:"KOI-961",x:-79.7887,y:97.4925,z:2.2304,type:"M"});
+			JSONArr.push({name:"HD 31527",x:49.9393,y:15.9826,z:-114.5715,type:"G"});
+			JSONArr.push({name:"HD 10180",x:91.8892,y:-78.6565,z:-38.7109,type:"G"});
+			JSONArr.push({name:"HD 47186",x:16.8861,y:-33.6911,z:123.3725,type:"G"});
+			JSONArr.push({name:"HR 8799",x:-59.2875,y:38.4372,z:107.9286,type:"A"});
+			JSONArr.push({name:"HD 93385",x:-63.0744,y:64.4839,z:104.4387,type:"G"});
+			JSONArr.push({name:"BD-08°2823",x:-88.5581,y:90.537,z:57.2845,type:"K"});
+			JSONArr.push({name:"HD 147018",x:-11.7719,y:-34.1629,z:-135.2565,type:"G"});
+			JSONArr.push({name:"HD 37605",x:123.9053,y:-52.1271,z:-39.1182,type:"K"});
+			JSONArr.push({name:"HD 215497",x:-120.0909,y:-16.039,z:-74.0602,type:"K"});
+			JSONArr.push({name:"HD 20003",x:56.6339,y:91.7342,z:-93.9491,type:"G"});
+			JSONArr.push({name:"HD 155358",x:1.6486,y:0.9681,z:143.9873,type:"G"});
+			JSONArr.push({name:"HIP 5158",x:110.9101,y:-94.9383,z:-1.2923,type:"K"});
+			JSONArr.push({name:"Nu Ophiuchi",x:120.2076,y:70.5925,z:63.0541,type:"K"});
+			JSONArr.push({name:"HD 187123",x:84.3774,y:-103.0995,z:83.066,type:"G"});
+			JSONArr.push({name:"HD 204313",x:NaN,y:NaN,z:NaN,type:"G"});
+			JSONArr.push({name:"Cha 110913-773444",x:-8.1519,y:122.6154,z:-107.0888,type:"L"});
+			JSONArr.push({name:"HD 11506",x:-126.9371,y:108.6573,z:25.3292,type:"G"});
+			JSONArr.push({name:"HD 9446",x:97.1776,y:-83.1834,z:-113.4814,type:"G"});
+			JSONArr.push({name:"HD 159868",x:-82.3323,y:-48.35,z:-143.0653,type:"G"});
+			JSONArr.push({name:"HIP 14810",x:-50.0658,y:-81.0953,z:145.5781,type:"G"});
+			JSONArr.push({name:"HD 125612",x:43.0483,y:-22.7797,z:-170.1674,type:"G"});
+			JSONArr.push({name:"HD 183263",x:16.5872,y:-20.2677,z:178.0845,type:"G"});
+			JSONArr.push({name:"HD 177830",x:-121.1598,y:148.0433,z:-25.5439,type:"K"});
+			JSONArr.push({name:"HD 108874",x:122.0811,y:163.4287,z:-1.8057,type:"G"});
+			JSONArr.push({name:"HD 74156",x:-111.7587,y:-79.6977,z:-158.9285,type:"G"});
+			JSONArr.push({name:"HD 200964",x:-147.2338,y:-164.5018,z:31.4698,type:"K"});
+			JSONArr.push({name:"HD 163607",x:-165.5403,y:-97.2143,z:-117.349,type:"G"});
+			JSONArr.push({name:"24 Sextantis",x:176.9105,y:-180.8637,z:0,type:"G"});
+			JSONArr.push({name:"HAT-P-17",x:30.3474,y:33.9067,z:-291.4693,type:"K"});
+			JSONArr.push({name:"HD 73526",x:-263.6703,y:-188.0294,z:-52.0282,type:"G"});
+			JSONArr.push({name:"HD 16031",x:30.17,y:-193.2485,z:-304.6125,type:"F"});
+			JSONArr.push({name:"HD 47536",x:-150.265,y:299.8087,z:221.6735,type:"K"});
+			JSONArr.push({name:"COROT-7",x:30.3155,y:-60.4856,z:460.0516,type:"K"});
+			JSONArr.push({name:"Kepler-10",x:-344.6909,y:421.1725,z:-147.9794,type:"G"});
+			JSONArr.push({name:"HD 102272",x:-7.2203,y:108.6031,z:788.5235,type:"K"});
+			JSONArr.push({name:"Kepler-20",x:240.6613,y:-294.0604,z:-870.6955,type:"G"});
+			JSONArr.push({name:"PSR B1257+12",x:806.8174,y:181.4839,z:-525.8415,type:"p"});
+			JSONArr.push({name:"NN Serpentis",x:493.7725,y:-1250.2887,z:-854.7607,type:"W"});
+			JSONArr.push({name:"Kepler-11",x:1250.0226,y:-1527.3836,z:-317.0867,type:"G"});
+			JSONArr.push({name:"Kepler-9",x:-1665.8636,y:2035.4934,z:816.1991,type:"G"});
+			JSONArr.push({name:"OGLE-2006-BLG-109L",x:-645.1062,y:-378.8415,z:-4791.9534,type:"M"});
+			
+			$(document).ready(function(){
+				SB = new StarBurst(JSONArr);
+				//SB.starFile = "../star.png";
+				SB.init();
+				SB.animate();
+			});
+			
+		</script>
+	</head>
+	<body>
+		<!-- -->
+	</body>
+	<footer>
+		<!-- -->
+	</footer>
+<html>
