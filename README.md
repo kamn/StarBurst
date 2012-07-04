@@ -1,5 +1,8 @@
 StarBurst
----------
+=========
+
+![StarBurst]
+(http://i.imgur.com/iPtIW.png "StarBurst")
 
 The purpose for StarBurst is a javascript plugin for the static rendering of stars in a 3D view. I hope some people will find it useful to gain a greater understanding of our little section of the Universe.
 
