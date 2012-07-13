@@ -23,7 +23,8 @@ var StarBurst = function(JSONArr){
 	this.material = null;
 	this.mesh = null;
 	this.mouse = {x:0,y:0};
-	this.cameraMovement = {x:0,y:0,z:0};
+	this.cameraMovement = {x:0,y:0,z:(Math.PI/2)};
+	this.cameraPosDirection = {x:true,y:true,z:true};
 	this.planeOn = true;
 	this.planeWidth = 500;
 	this.planeHeight = 500;
@@ -35,6 +36,8 @@ var StarBurst = function(JSONArr){
 	this.mouseDown = false;
 	this.JSONArr = JSONArr;
 	this.starFile = "star.png"
+	this.offsetX = 0;
+	this.offsetY = 0;
 }
 
 /**
@@ -81,15 +84,21 @@ StarBurst.prototype.onMouseMove = function(e){
 		var centerX = currMouseX - (window.innerWidth/2);
 		var centerY = currMouseY - (window.innerHeight/2);
 	
-		//
-		var offsetX = (currMouseX - this.mouse.x);
-		var offsetY = (currMouseY - this.mouse.y);
+		/*var offsetX = 0;
+		var offsetY = 0;
+		
+		if(this.firstOnDown){
+		
+		}else{}*/
+		//TODO: Figure out how to keep it in the same spot
+		var offsetX = (currMouseX - this.mouse.x)/100;
+		var offsetY = (currMouseY - this.mouse.y)/100;
 		
 		//
 		if(offsetX > 200){
-			offsetX = 200;
+			//offsetX = 200;
 		}else if(offsetX < -200){
-			offsetX = -200;
+			//offsetX = -200;
 		}
 		
 		//
@@ -102,12 +111,14 @@ StarBurst.prototype.onMouseMove = function(e){
 		//DEV: See the offset by the mouse
 		//console.log(offsetX+":"+offsetY);
 		
-		
-		
 		//Relocate the camera
-		this.cameraMovement.x = offsetX/200;
+		this.cameraMovement.x = (offsetX/200);//((this.cameraMovement.x*200) - offsetX)/200;
 		this.cameraMovement.y = offsetY/200;
-		this.cameraMovement.z = offsetX/200;		
+		this.cameraMovement.z = (Math.PI/2) + (offsetX/200) ;//((this.cameraMovement.z*200) - offsetX)/200;
+		
+		//
+		this.offsetX = offsetX;
+		this.offsetY = offsetY;
 	}
 }
 
@@ -145,6 +156,9 @@ StarBurst.prototype.init = function(){
 	//TODO: Have more options for this
 	this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 	
+	//
+	this.camera.position.z = 400;
+	
 	//Add camera
 	this.scene.add(this.camera);
 	
@@ -171,9 +185,7 @@ StarBurst.prototype.init = function(){
     //TODO: Rename star2.png
     //TODO: Have the location be an option
     var sprite = THREE.ImageUtils.loadTexture(this.starFile);
-    
-    console.log(sprite);
-    
+        
     var JSONArr = this.JSONArr;
     
     //TODO:
@@ -287,10 +299,64 @@ StarBurst.prototype.init = function(){
 StarBurst.prototype.render = function(){
 
 	//TODO: Also have these be options
-	this.camera.position.x = Math.sin(this.cameraMovement.x) * 400;
-	this.camera.position.y = Math.sin(this.cameraMovement.y) * 400;
-	this.camera.position.z = Math.cos(this.cameraMovement.z) * 400;
+	
+	//
+	var nextCameraX = this.camera.position.x + Math.sin(this.cameraMovement.x) * 400;
+	var nextCameraY = this.camera.position.y + Math.sin(this.cameraMovement.y) * 400;
+	var nextCameraZ = this.camera.position.z + Math.cos(this.cameraMovement.z) * 400;
+	
+	
+	//The following are to help the camera move
+	if(!this.cameraPosDirection.x){
+		nextCameraX = this.camera.position.x + Math.sin(-this.cameraMovement.x) * 400;
+	}
+	if(!this.cameraPosDirection.y){
+		nextCameraY = this.camera.position.y + Math.sin(-this.cameraMovement.y) * 400;
+	}
+	if(!this.cameraPosDirection.z){
+		nextCameraZ = this.camera.position.z + (-Math.cos(this.cameraMovement.z)) * 400;
+	}	
+	
+	//
+	if(this.camera.position.y > 400 || this.camera.position.y < -400){
+		if(this.cameraPosDirection.y){
+			this.cameraPosDirection.y = false;
+			nextCameraY = this.camera.position.y + Math.sin(-this.cameraMovement.y) * 400;
+		}else{
+			this.cameraPosDirection.y = true;
+			nextCameraY = this.camera.position.y + Math.sin(this.cameraMovement.y) * 400;
 
+		}
+	
+	}
+	if(this.camera.position.x > 400 || this.camera.position.x < -400){
+		console.log(this.cameraPosDirection.x);
+		if(this.cameraPosDirection.x){
+			this.cameraPosDirection.x = false;
+			nextCameraX = this.camera.position.x + Math.sin(-this.cameraMovement.x) * 400;
+
+		}else{
+			this.cameraPosDirection.x = true;
+			nextCameraX = this.camera.position.x + Math.sin(this.cameraMovement.x) * 400;
+		}
+	}
+	
+	if(this.camera.position.z > 400 || this.camera.position.z < -400){
+		if(this.cameraPosDirection.z){
+			this.cameraPosDirection.z = false;
+			nextCameraZ = this.camera.position.z + (-Math.cos(this.cameraMovement.z)) * 400;
+
+		}else{
+			this.cameraPosDirection.z = true;
+			nextCameraZ = this.camera.position.z + Math.cos(this.cameraMovement.z) * 400;
+		}
+	}
+	
+	//Next position of camera
+	this.camera.position.x = nextCameraX;
+	this.camera.position.y = nextCameraY;
+	this.camera.position.z = nextCameraZ;
+	
 	//Adjust camera
 	this.camera.lookAt(this.scene.position);
 
