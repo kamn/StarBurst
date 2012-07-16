@@ -38,6 +38,10 @@ var StarBurst = function(JSONArr){
 	this.starFile = "star.png"
 	this.offsetX = 0;
 	this.offsetY = 0;
+	this.offsetSpeedX = 0;
+	this.offsetSpeedY = 0;
+	this.mouse.x = 0;
+	this.mouse.y = 0;
 }
 
 /**
@@ -91,30 +95,31 @@ StarBurst.prototype.onMouseMove = function(e){
 		
 		}else{}*/
 		//TODO: Figure out how to keep it in the same spot
-		var offsetX = (currMouseX - this.mouse.x)/100;
-		var offsetY = (currMouseY - this.mouse.y)/100;
-		
-		//
-		if(offsetX > 200){
-			//offsetX = 200;
-		}else if(offsetX < -200){
-			//offsetX = -200;
-		}
-		
-		//
-		if(offsetY > 200){
-			offsetY = 200;
-		}else if(offsetY < -200){
-			offsetY = -200;
-		}
+		var offsetX = (currMouseX - this.mouse.x)/1000;
+		var offsetY = (currMouseY - this.mouse.y)/1000;
 		
 		//DEV: See the offset by the mouse
 		//console.log(offsetX+":"+offsetY);
 		
 		//Relocate the camera
-		this.cameraMovement.x = (offsetX/200);//((this.cameraMovement.x*200) - offsetX)/200;
-		this.cameraMovement.y = offsetY/200;
-		this.cameraMovement.z = (Math.PI/2) + (offsetX/200) ;//((this.cameraMovement.z*200) - offsetX)/200;
+		/*this.cameraMovement.x = offsetX;//((this.cameraMovement.x*200) - offsetX)/200;
+		this.cameraMovement.y = offsetY;
+		this.cameraMovement.z = (offsetX);//((this.cameraMovement.z*200) - offsetX)/200;*/
+		
+		this.cameraMovement.x += offsetX/20;
+		this.cameraMovement.y += offsetY/20;
+		this.cameraMovement.z += offsetX/20;
+		
+		
+		/*if(this.cameraMovement.x > 0 && offsetX < 0){
+			this.cameraMovement.x -= offsetX;
+		}
+		if(this.cameraMovement.y > 0 && offsetY < 0){
+			this.cameraMovement.y -= offsetY;
+		}
+		if(this.cameraMovement.z > 0 && offsetX < 0){
+			this.cameraMovement.z -= offsetX;
+		}*/
 		
 		//
 		this.offsetX = offsetX;
@@ -301,11 +306,17 @@ StarBurst.prototype.render = function(){
 	//TODO: Also have these be options
 	
 	//
-	var nextCameraX = this.camera.position.x + Math.sin(this.cameraMovement.x) * 400;
+	/*var nextCameraX = this.camera.position.x + Math.sin(this.cameraMovement.x) * 400;
 	var nextCameraY = this.camera.position.y + Math.sin(this.cameraMovement.y) * 400;
 	var nextCameraZ = this.camera.position.z + Math.cos(this.cameraMovement.z) * 400;
+	*/
+	this.camera.position.x = Math.sin(this.cameraMovement.x) * 400;
+	this.camera.position.y = Math.sin(this.cameraMovement.y) * 400;
+	this.camera.position.z = Math.cos(this.cameraMovement.x) * 400;
 	
+	//console.log(this.cameraMovement.x+"-"+this.cameraMovement.y+"-"+this.cameraMovement.z);
 	
+	/*
 	//The following are to help the camera move
 	if(!this.cameraPosDirection.x){
 		nextCameraX = this.camera.position.x + Math.sin(-this.cameraMovement.x) * 400;
@@ -350,12 +361,15 @@ StarBurst.prototype.render = function(){
 			this.cameraPosDirection.z = true;
 			nextCameraZ = this.camera.position.z + Math.cos(this.cameraMovement.z) * 400;
 		}
-	}
+	}*/
+	this.cameraMovement.x += this.offsetX/20;
+	this.cameraMovement.y +=  this.offsetY/20;
+	this.cameraMovement.z +=  this.offsetX/20;
 	
-	//Next position of camera
+	/*//Next position of camera
 	this.camera.position.x = nextCameraX;
 	this.camera.position.y = nextCameraY;
-	this.camera.position.z = nextCameraZ;
+	this.camera.position.z = nextCameraZ;*/
 	
 	//Adjust camera
 	this.camera.lookAt(this.scene.position);
