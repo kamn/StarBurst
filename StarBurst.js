@@ -48,7 +48,13 @@ var StarBurst = function(JSONArr){
 	this.lineColor = 0x555555;
 	this.lineWidth = 0.01;
 	this.mouseDown = false;
-	this.JSONArr = JSONArr;
+
+	if(JSONArr == null || JSONArr == undefined){
+		this.JSONArr = null;
+	}else{
+		this.JSONArr = JSONArr;
+	}
+
 	this.starFile = "star.png"
 	this.offsetX = 0;
 	this.offsetY = 0;
@@ -87,7 +93,8 @@ StarBurst.prototype.onMouseDown = function(e){
 
 /**
 *
-*
+* @param e -
+* @return Nothing
 */
 StarBurst.prototype.onMouseMove = function(e){
 	
@@ -144,13 +151,12 @@ StarBurst.prototype.onMouseMove = function(e){
 /**
 * This will be mainly to update the x and y mouse coordiates and not much else
 * @param e - Event
-*
+* @return Nothing
 */
 StarBurst.prototype.onMouseUp = function(e){
 	e.preventDefault();
 	
 	//DEV: Just to check that the mouse is working
-	//console.log("MOUSEUP");
 	
 	this.mouseDown = false;
 	
@@ -161,10 +167,24 @@ StarBurst.prototype.onMouseUp = function(e){
 	
 }
 
+/**
+* Will load a JSON file of star data 
+* @param file - A file to load
+* @return a JSON Array
+*/
+StarBurst.prototype.loadJSON = function(file){
+	
+
+	$.getJSON(file,function(data){
+
+
+	});
+}
+
 //TODO: Have it take a parameter object
 /**
 * The basic initilization function for StarBrst
-*
+* @return Nothing
 */
 StarBurst.prototype.init = function(){
 	
@@ -175,10 +195,9 @@ StarBurst.prototype.init = function(){
 	//TODO: Have more options for this
 	this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 	
-	//
+	//TODO: This should be a position
 	this.camera.position.z = 400;
 	
-	//Add camera
 	this.scene.add(this.camera);
 	
 	//TODO: Have option for using a plane at all
@@ -207,7 +226,8 @@ StarBurst.prototype.init = function(){
         
     var JSONArr = this.JSONArr;
     
-    //TODO:
+    var tempGeo = new THREE.Geometry();
+    //TODO: Separete into function
 	for(i = 0;i < JSONArr.length;i++){
 		
 		var starData = JSONArr[i];
@@ -224,21 +244,32 @@ StarBurst.prototype.init = function(){
 
     		var lineGeometry = new THREE.Geometry();
     		
+    		var newVertexY = vertex.y;
+
+    		if(newVertexY > 0){
+    			newVertexY -= 3;
+    		}else{
+    			newVertexY += 3;
+    		}
+
     		//Due to the nature of the diffference between how we standardly think of...
     		//3D cooridinates and how WebGL uses it this is needed
     		//TODO: Add the correct points
-    		lineGeometry.vertices.push(new THREE.Vector3(vertex.x,vertex.y,vertex.z));
+    		lineGeometry.vertices.push(new THREE.Vector3(vertex.x,newVertexY,vertex.z));
     		lineGeometry.vertices.push(new THREE.Vector3(vertex.x,0,vertex.z));
     		
+
     		//TODO: Make some into variables
     		var lineMaterial = new THREE.LineBasicMaterial({color:0x555555, linewidth: 0.01});
     		var line = new THREE.Line(lineGeometry,lineMaterial);
     		this.scene.add(line);
     	
     	}
+
     	//The location the star will appear at
     	this.geometry.vertices.push(vertex);
-    	
+    	tempGeo.vertices.push(vertex);
+
     	//TODO:
     	var size  = 10;
     	
@@ -291,6 +322,11 @@ StarBurst.prototype.init = function(){
 		this.scene.add(particleStarSystem);
 		
     }
+    //var particleStarSystem = new THREE.ParticleSystem(tempGeo,starMaterial);
+		
+	//Add to sceen
+	//this.scene.add(particleStarSystem);
+
     
     //TODO: This needs to be an option Use WebGL or Canvas with options for each
     this.renderer = new THREE.WebGLRenderer({alpha:0});
@@ -312,8 +348,24 @@ StarBurst.prototype.init = function(){
 }	
 
 /**
+* Will make the stars from the Json Data once it is loaded
+* @return Nothing
+*/
+StarBurst.prototype.constructFromJSONArr = function(){
+
+	if(this.JSONLoaded === true){
+
+
+	}else{
+
+		//TODO: Call this after an interval
+		//setTimeout();
+	}
+
+};
+/**
 * Main render function for StarBurst.
-*
+* @return Nothing
 */
 StarBurst.prototype.render = function(){
 
@@ -330,60 +382,9 @@ StarBurst.prototype.render = function(){
 	
 	//console.log(this.cameraMovement.x+"-"+this.cameraMovement.y+"-"+this.cameraMovement.z);
 	
-	/*
-	//The following are to help the camera move
-	if(!this.cameraPosDirection.x){
-		nextCameraX = this.camera.position.x + Math.sin(-this.cameraMovement.x) * 400;
-	}
-	if(!this.cameraPosDirection.y){
-		nextCameraY = this.camera.position.y + Math.sin(-this.cameraMovement.y) * 400;
-	}
-	if(!this.cameraPosDirection.z){
-		nextCameraZ = this.camera.position.z + (-Math.cos(this.cameraMovement.z)) * 400;
-	}	
-	
-	//
-	if(this.camera.position.y > 400 || this.camera.position.y < -400){
-		if(this.cameraPosDirection.y){
-			this.cameraPosDirection.y = false;
-			nextCameraY = this.camera.position.y + Math.sin(-this.cameraMovement.y) * 400;
-		}else{
-			this.cameraPosDirection.y = true;
-			nextCameraY = this.camera.position.y + Math.sin(this.cameraMovement.y) * 400;
-
-		}
-	
-	}
-	if(this.camera.position.x > 400 || this.camera.position.x < -400){
-		console.log(this.cameraPosDirection.x);
-		if(this.cameraPosDirection.x){
-			this.cameraPosDirection.x = false;
-			nextCameraX = this.camera.position.x + Math.sin(-this.cameraMovement.x) * 400;
-
-		}else{
-			this.cameraPosDirection.x = true;
-			nextCameraX = this.camera.position.x + Math.sin(this.cameraMovement.x) * 400;
-		}
-	}
-	
-	if(this.camera.position.z > 400 || this.camera.position.z < -400){
-		if(this.cameraPosDirection.z){
-			this.cameraPosDirection.z = false;
-			nextCameraZ = this.camera.position.z + (-Math.cos(this.cameraMovement.z)) * 400;
-
-		}else{
-			this.cameraPosDirection.z = true;
-			nextCameraZ = this.camera.position.z + Math.cos(this.cameraMovement.z) * 400;
-		}
-	}*/
 	this.cameraMovement.x += this.offsetX/20;
 	this.cameraMovement.y +=  this.offsetY/20;
 	this.cameraMovement.z +=  this.offsetX/20;
-	
-	/*//Next position of camera
-	this.camera.position.x = nextCameraX;
-	this.camera.position.y = nextCameraY;
-	this.camera.position.z = nextCameraZ;*/
 	
 	//Adjust camera
 	this.camera.lookAt(this.scene.position);
@@ -396,7 +397,7 @@ StarBurst.prototype.render = function(){
 
 /**
 * The main animate function
-*
+* @return
 */
 StarBurst.prototype.animate = function(){
 	
