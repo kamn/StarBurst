@@ -88,6 +88,20 @@ StarBurst.prototype.onMouseDown = function(e){
 	
 	this.mouse.x = e.clientX;
 	this.mouse.y = e.clientY;
+
+	var projector = new THREE.Projector();
+	var vector = new THREE.Vector3( (e.clientX / window.innerWidth ) * 2 - 1,  -(e.clientY / window.innerHeight ) * 2 + 1, -1 );
+	
+	projector.unprojectVector( vector, this.camera );
+
+	var ray = new THREE.Ray( this.camera.position, vector.subSelf( this.camera.position ).normalize() );
+	
+	var intersects = ray.intersectObjects( this.scene.children );
+
+	if ( intersects.length > 0 ) {
+        console.log("you clicked particle named '" + intersects[0].object.name + "' with id: " + intersects[0].object.id);
+
+	}
 	
 }
 
@@ -108,39 +122,14 @@ StarBurst.prototype.onMouseMove = function(e){
 		//TODO: Figure out the center
 		var centerX = currMouseX - (window.innerWidth/2);
 		var centerY = currMouseY - (window.innerHeight/2);
-	
-		/*var offsetX = 0;
-		var offsetY = 0;
-		
-		if(this.firstOnDown){
-		
-		}else{}*/
+
 		//TODO: Figure out how to keep it in the same spot
 		var offsetX = (currMouseX - this.mouse.x)/1000;
 		var offsetY = (currMouseY - this.mouse.y)/1000;
 		
-		//DEV: See the offset by the mouse
-		//console.log(offsetX+":"+offsetY);
-		
-		//Relocate the camera
-		/*this.cameraMovement.x = offsetX;//((this.cameraMovement.x*200) - offsetX)/200;
-		this.cameraMovement.y = offsetY;
-		this.cameraMovement.z = (offsetX);//((this.cameraMovement.z*200) - offsetX)/200;*/
-		
 		this.cameraMovement.x += offsetX/20;
 		this.cameraMovement.y += offsetY/20;
 		this.cameraMovement.z += offsetX/20;
-		
-		
-		/*if(this.cameraMovement.x > 0 && offsetX < 0){
-			this.cameraMovement.x -= offsetX;
-		}
-		if(this.cameraMovement.y > 0 && offsetY < 0){
-			this.cameraMovement.y -= offsetY;
-		}
-		if(this.cameraMovement.z > 0 && offsetX < 0){
-			this.cameraMovement.z -= offsetX;
-		}*/
 		
 		//
 		this.offsetX = offsetX;
@@ -210,12 +199,20 @@ StarBurst.prototype.init = function(){
 	var planeMesh = new THREE.Mesh(this.geometry,planeMaterial);
 	
 	planeMesh.doubleSided = true;
+
 	//Add the plane to the scene
 	this.scene.add(planeMesh);
     
+
+    //
+    var light = new THREE.DirectionalLight( 0xffffff, 2 );
+	light.position.set( 1, 1, 1 ).normalize();
+	this.scene.add( light );
     //Maybe use the example file 
     //TODO: Load from JSON file
-    
+    var light = new THREE.DirectionalLight( 0xffffff );
+	light.position.set( -1, -1, -1 ).normalize();
+	this.scene.add( light );
     
     //TODO: Maybe there is a better name
     var starMaterial = null;
@@ -284,42 +281,58 @@ StarBurst.prototype.init = function(){
 		});
   	
     	//TODO: Put into a sort of ENUM or Object
-    	var classM = 0.05;
-    	var classK = 0.07;
-    	var classG = 0.11;
-    	var classF = 0.15;
-    	var classA = 0.58;
-    	var classB = 0.58;
-    	var classO = 0.58;
+    	var classM = 0xFF4719;
+    	var classK = 0xFFCC00;
+    	var classG = 0xE6E600;
+    	var classF = 0xF1F1FF;
+    	var classA = 0xBDCEFF;
+    	var classB = 0xA6BBFF;
+    	var classO = 0x9DB4FF;
     	
     	//Get the starType
     	var starType = starData.type;
+
+    	//A default color
+    	var starColor = 0xffffff;
+
     	
     	//TODO: I don't like this way of doing things...
     	if(starType == "M"){
-			starMaterial.color.setHSV(classM, 1.0, 1.0);
+			//starMaterial.color.setHSV(classM, 1.0, 1.0);
+			starColor = classM;
 		}else if(starType == "K"){
-			starMaterial.color.setHSV(classK, 1.0, 1.0);
+			//starMaterial.color.setHSV(classK, 1.0, 1.0);
+			starColor = classK;
 		}else if(starType == "G"){
-			starMaterial.color.setHSV(classG, 1.0, 1.0);
+			//starMaterial.color.setHSV(classG, 1.0, 1.0);
+			starColor = classG;
 		}else if(starType == "F"){
-			starMaterial.color.setHSV(classF, 1.0, 1.0);
+			//starMaterial.color.setHSV(classF, 1.0, 1.0);
+			starColor = classF;
 		}else if(starType == "A"){
-			starMaterial.color.setHSV(classA, 1.0, 1.0);
+			//starMaterial.color.setHSV(classA, 1.0, 1.0);
+			starColor = classA;
 		}else if(starType == "B"){
-			starMaterial.color.setHSV(classB, 1.0, 1.0);
+			//starMaterial.color.setHSV(classB, 1.0, 1.0);
+			starColor = classB;
 		}else if(starType == "O"){
-			starMaterial.color.setHSV(classO, 1.0, 1.0);
+			//starMaterial.color.setHSV(classO, 1.0, 1.0);
+			starColor = classO;
 		}
 		
 		//DEV: I am not sure how I feel about a particle system for everthing
 		//DEV: It could slow things down a lot
 		
 		//TODO: Is there a better name for this?
-		var particleStarSystem = new THREE.ParticleSystem(this.geometry,starMaterial);
-		
+		//var particleStarSystem = new THREE.ParticleSystem(this.geometry,starMaterial);
+		var sphereGeo = new THREE.SphereGeometry( 3, 8, 8 );
+		var sphere = new THREE.Mesh( sphereGeo, new THREE.MeshBasicMaterial( { color: starColor } ) );
+		sphere.position.x = starData.x;
+		sphere.position.y = starData.y;
+		sphere.position.z = starData.z;
 		//Add to sceen
-		this.scene.add(particleStarSystem);
+		//this.scene.add(particleStarSystem);
+		this.scene.add(sphere);
 		
     }
     //var particleStarSystem = new THREE.ParticleSystem(tempGeo,starMaterial);
@@ -340,7 +353,6 @@ StarBurst.prototype.init = function(){
     
     //TODO: Add as option
     //Attach listener(s)
-	//document.attachListner();
 	document.addEventListener('mousedown',this.onMouseDown.bind(this),false);
 	document.addEventListener('mousemove',this.onMouseMove.bind(this),false);
 	document.addEventListener('mouseup',this.onMouseUp.bind(this),false)
@@ -369,13 +381,12 @@ StarBurst.prototype.constructFromJSONArr = function(){
 */
 StarBurst.prototype.render = function(){
 
+	
+	//Setting up of rpicking
+	
 	//TODO: Also have these be options
 	
 	//
-	/*var nextCameraX = this.camera.position.x + Math.sin(this.cameraMovement.x) * 400;
-	var nextCameraY = this.camera.position.y + Math.sin(this.cameraMovement.y) * 400;
-	var nextCameraZ = this.camera.position.z + Math.cos(this.cameraMovement.z) * 400;
-	*/
 	this.camera.position.x = Math.sin(this.cameraMovement.x) * 400;
 	this.camera.position.y = Math.sin(this.cameraMovement.y) * 400;
 	this.camera.position.z = Math.cos(this.cameraMovement.x) * 400;
