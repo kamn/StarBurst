@@ -55,13 +55,16 @@ This is a incomplete list
 	
 v0.1
 	- (Done)Better and smoother camera managment.
+
 v0.2
 	- JSON file loading
 	- Maybe create a node.js basic website(Just for easy of use)
+
 v0.3
 	- Zoom features.
 	- Pick a star and focus on star
 	- (Done)Controls
+	
 v0.4
 	- Star Info
 	- Dynamically adding stars
