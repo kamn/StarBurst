@@ -74,7 +74,21 @@ StarBurst.prototype.getStarTypeColorData = function(type){
 
 }
 
+/**
+* Will process the keypress
+* @param e - An event from the keypress
+* @return Nothing
+*/
+StarBurst.prototype.keyPressed = function(e){
 
+	//TODO: Check to see if 's' was pressed to stop the rotation
+	if(e.keyCode == 115 || e.keyCode == 83){
+		this.offsetX = 0;
+		this.offsetY = 0;
+	}
+	//TODO: Check to see if '-' or '+' was pressed to zoom in or out
+
+}
 /**
 * Will calculate the drag
 * @param - 
@@ -89,8 +103,16 @@ StarBurst.prototype.onMouseDown = function(e){
 	this.mouse.x = e.clientX;
 	this.mouse.y = e.clientY;
 
+	var tempX = (e.clientX / window.innerWidth ) * 2 - 1;
+	var tempY = -(e.clientY / window.innerHeight ) * 2 + 1;
+		
+	//Was to help make the picking very exact
+	//tempX -= 0.015;
+	//tempY += 0.03;
+	
+
 	var projector = new THREE.Projector();
-	var vector = new THREE.Vector3( (e.clientX / window.innerWidth ) * 2 - 1,  -(e.clientY / window.innerHeight ) * 2 + 1, -1 );
+	var vector = new THREE.Vector3( tempX,  tempY, -1 );
 	
 	projector.unprojectVector( vector, this.camera );
 
@@ -100,7 +122,20 @@ StarBurst.prototype.onMouseDown = function(e){
 
 	if ( intersects.length > 0 ) {
         console.log("you clicked particle named '" + intersects[0].object.name + "' with id: " + intersects[0].object.id);
+        INTERSECTED = intersects[ 0 ].object;
+        
+        if(intersects[0].object.name === "Plane" && intersects.length > 1){
+        	INTERSECTED = intersects[ 1 ].object;
+        }
+        if(INTERSECTED.name !== "Plane"){
 
+		
+        	//TODO: Update div info
+
+
+			//INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+			INTERSECTED.material.color.setHex( 0xff0000 );
+		}
 	}
 	
 }
@@ -176,7 +211,17 @@ StarBurst.prototype.loadJSON = function(file){
 * @return Nothing
 */
 StarBurst.prototype.init = function(){
-	
+	container = document.createElement( 'div' );
+	document.body.appendChild( container );
+
+	starInfoDiv = document.createElement( 'div' );
+	starInfoDiv.style.position = "absolute";
+	starInfoDiv.style.top = "10px";
+	starInfoDiv.className = "info";
+	starInfoDiv.innerHTML = "<strong>Controls</strong><p>Click and drag to rotate</p><p>Click a star to turn it red</p><p>Press 's' to stop the rotation</p>";
+
+	container.appendChild(starInfoDiv);
+
 	//Start the Three.Scene
 	this.scene = new THREE.Scene();
 	
@@ -199,6 +244,7 @@ StarBurst.prototype.init = function(){
 	var planeMesh = new THREE.Mesh(this.geometry,planeMaterial);
 	
 	planeMesh.doubleSided = true;
+	planeMesh.name = 'Plane';
 
 	//Add the plane to the scene
 	this.scene.add(planeMesh);
@@ -349,13 +395,15 @@ StarBurst.prototype.init = function(){
     
     //TODO: option of speficiying a element to attach to...?
     //Attach to the body of the document
-    document.body.appendChild(this.renderer.domElement);
+    container.appendChild(this.renderer.domElement);
     
     //TODO: Add as option
     //Attach listener(s)
 	document.addEventListener('mousedown',this.onMouseDown.bind(this),false);
 	document.addEventListener('mousemove',this.onMouseMove.bind(this),false);
-	document.addEventListener('mouseup',this.onMouseUp.bind(this),false)
+	document.addEventListener('mouseup',this.onMouseUp.bind(this),false);
+	document.addEventListener('keypress',this.keyPressed.bind(this),false);
+
 
 }	
 
@@ -375,6 +423,7 @@ StarBurst.prototype.constructFromJSONArr = function(){
 	}
 
 };
+
 /**
 * Main render function for StarBurst.
 * @return Nothing
