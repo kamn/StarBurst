@@ -36,7 +36,7 @@ How To Use
 
 It is based as a javascript plugin so it is fairly simple to use.
 
-Currently you need to include the star.png in the same directory as the StarBurst.js or specify where to get it
+Currently you jsut need to include the style.css 
 
 
 Options
@@ -49,25 +49,40 @@ The following format will help you wil understanding what
 Milestones
 ----------
 	
-This is a incomplete list
+This is a incomplete and evolving list
 	
-	The current version is v0.1 and is just a prototype.
+	The current version is v0.2
 	
 v0.1
-	- (Done)Better and smoother camera managment.
+	* (Done)Better and smoother camera managment.
 
 v0.2
-	- JSON file loading
-	- Maybe create a node.js basic website(Just for easy of use)
+	* (Done)Stop spinning feature
+	* (Done)Pick a star 
+	* (Done)Controls Panel
 
 v0.3
-	- Zoom features.
-	- Pick a star and focus on star
-	- (Done)Controls
+	* (Done)Zoom features
+	* Focus on star
+	* Make stars glowy
+	* Star select 'halo'(or keep it red)
 	
 v0.4
-	- Star Info
-	- Dynamically adding stars
+	* Star Info(Name, Star type, and distance to Sol)
+	* Option's menu
+		* Enable/Disable Grid
+		* Enable/Disable Lines to stars
+		* Enable/Disable Star Info
+	* Point to Galatic Center
+
+v0.5
+	* Dynamically adding stars
+	* Background
+
+v0.6
+	* Dynamically adding stars
+	* Background
+	* JSON file loading
 
 
 
