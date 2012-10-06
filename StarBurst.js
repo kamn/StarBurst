@@ -62,6 +62,7 @@ var StarBurst = function(JSONArr){
 	this.offsetSpeedY = 0;
 	this.mouse.x = 0;
 	this.mouse.y = 0;
+	this.distance = 400;
 }
 
 /**
@@ -75,25 +76,36 @@ StarBurst.prototype.getStarTypeColorData = function(type){
 }
 
 /**
-* Will process the keypress
+* Will process the keypress one of several different ways
 * @param e - An event from the keypress
 * @return Nothing
 */
 StarBurst.prototype.keyPressed = function(e){
 
-	//TODO: Check to see if 's' was pressed to stop the rotation
+	//Check to see if 's' was pressed to stop the rotation
 	if(e.keyCode == 115 || e.keyCode == 83){
 		this.offsetX = 0;
 		this.offsetY = 0;
 	}
-	//TODO: Check to see if '-' or '+' was pressed to zoom in or out
+
+	//Checks '+' or '=' and zooms in
+	if(e.keyCode == 45 || e.keyCode == 95){
+		this.distance+=2;
+	}
+
+	//Checks '-' or '_' and zooms out
+	if(e.keyCode == 61 || e.keyCode == 43){
+		this.distance-=2;
+	}
+
+	//For debugging
+	//console.log(e.keyCode);
 
 }
 /**
-* Will calculate the drag
-* @param - 
-* @return 
-*
+* Will calculate the drag and check to see if the user has clicked on anything
+* @param e - An event from the mouseDown
+* @return Nothing
 */
 StarBurst.prototype.onMouseDown = function(e){
 	e.preventDefault();
@@ -106,7 +118,7 @@ StarBurst.prototype.onMouseDown = function(e){
 	var tempX = (e.clientX / window.innerWidth ) * 2 - 1;
 	var tempY = -(e.clientY / window.innerHeight ) * 2 + 1;
 		
-	//Was to help make the picking very exact
+	//Was to help make the picking very exact. Probably no longer needed
 	//tempX -= 0.015;
 	//tempY += 0.03;
 	
@@ -118,23 +130,32 @@ StarBurst.prototype.onMouseDown = function(e){
 
 	var ray = new THREE.Ray( this.camera.position, vector.subSelf( this.camera.position ).normalize() );
 	
+	//Get the intersected objects
 	var intersects = ray.intersectObjects( this.scene.children );
 
 	if ( intersects.length > 0 ) {
-        console.log("you clicked particle named '" + intersects[0].object.name + "' with id: " + intersects[0].object.id);
+
+		//Getting the first selected object
         INTERSECTED = intersects[ 0 ].object;
         
+        //Confirm that if you ARE selecting the plane select something else
         if(intersects[0].object.name === "Plane" && intersects.length > 1){
         	INTERSECTED = intersects[ 1 ].object;
         }
+
+        // This is redundant but it might be used for other objects
         if(INTERSECTED.name !== "Plane"){
 
-		
-        	//TODO: Update div info
+        	//INTERSECTED.name
+			console.log("you clicked particle named '" + this.JSONArr[parseInt(INTERSECTED.name)].name + "' with id: " + INTERSECTED.id);
 
 
 			//INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-			INTERSECTED.material.color.setHex( 0xff0000 );
+			//INTERSECTED.material.color.setHex( 0xff0000 );
+
+			//TODO: Put this into a function
+			
+			this.updateStarInfo(this.JSONArr[parseInt(INTERSECTED.name)]);
 		}
 	}
 	
@@ -218,9 +239,15 @@ StarBurst.prototype.init = function(){
 	starInfoDiv.style.position = "absolute";
 	starInfoDiv.style.top = "10px";
 	starInfoDiv.className = "info";
-	starInfoDiv.innerHTML = "<strong>Controls</strong><p>Click and drag to rotate</p><p>Click a star to turn it red</p><p>Press 's' to stop the rotation</p>";
-
+	starInfoDiv.innerHTML = "<strong>Controls</strong><p>Click and drag to rotate</p><p>Click a star to it's name</p><p>Press 's' to stop the rotation</p><p> '-' and '+' to zoom in/out";
 	container.appendChild(starInfoDiv);
+
+
+	starNameDiv = document.createElement( 'div' );
+	starNameDiv.style.position = "absolute";
+	starNameDiv.className = "starName"
+	starNameDiv.innerHTML = "<strong>Star Name</strong><p class='star'>None</p>"
+	container.appendChild(starNameDiv);
 
 	//Start the Three.Scene
 	this.scene = new THREE.Scene();
@@ -263,6 +290,7 @@ StarBurst.prototype.init = function(){
     //TODO: Maybe there is a better name
     var starMaterial = null;
     
+    //Currently I am not using any images but for the highlighting I might need to
     //TODO: Rename star2.png
     //TODO: Have the location be an option
     var sprite = THREE.ImageUtils.loadTexture(this.starFile);
@@ -276,18 +304,18 @@ StarBurst.prototype.init = function(){
 		var starData = JSONArr[i];
 	
 		//TODO: rename 'vertex' to 'starVertex'
-		var vertex = new THREE.Vector3();
+		var starVertex = new THREE.Vector3();
 		this.geometry = new THREE.Geometry();
 		
-		vertex.x = starData.x;
-		vertex.y = starData.y;
-		vertex.z = starData.z;
+		starVertex.x = starData.x;
+		starVertex.y = starData.y;
+		starVertex.z = starData.z;
 		
 		if(this.linesToStars){
 
     		var lineGeometry = new THREE.Geometry();
     		
-    		var newVertexY = vertex.y;
+    		var newVertexY = starVertex.y;
 
     		if(newVertexY > 0){
     			newVertexY -= 3;
@@ -298,8 +326,8 @@ StarBurst.prototype.init = function(){
     		//Due to the nature of the diffference between how we standardly think of...
     		//3D cooridinates and how WebGL uses it this is needed
     		//TODO: Add the correct points
-    		lineGeometry.vertices.push(new THREE.Vector3(vertex.x,newVertexY,vertex.z));
-    		lineGeometry.vertices.push(new THREE.Vector3(vertex.x,0,vertex.z));
+    		lineGeometry.vertices.push(new THREE.Vector3(starVertex.x,newVertexY,starVertex.z));
+    		lineGeometry.vertices.push(new THREE.Vector3(starVertex.x,0,starVertex.z));
     		
 
     		//TODO: Make some into variables
@@ -310,8 +338,8 @@ StarBurst.prototype.init = function(){
     	}
 
     	//The location the star will appear at
-    	this.geometry.vertices.push(vertex);
-    	tempGeo.vertices.push(vertex);
+    	this.geometry.vertices.push(starVertex);
+    	tempGeo.vertices.push(starVertex);
 
     	//TODO:
     	var size  = 10;
@@ -330,7 +358,7 @@ StarBurst.prototype.init = function(){
     	var classM = 0xFF4719;
     	var classK = 0xFFCC00;
     	var classG = 0xE6E600;
-    	var classF = 0xF1F1FF;
+    	var classF = 0xFFFFCC;
     	var classA = 0xBDCEFF;
     	var classB = 0xA6BBFF;
     	var classO = 0x9DB4FF;
@@ -339,43 +367,38 @@ StarBurst.prototype.init = function(){
     	var starType = starData.type;
 
     	//A default color
-    	var starColor = 0xffffff;
+    	var starColor = classM;
 
     	
     	//TODO: I don't like this way of doing things...
     	if(starType == "M"){
-			//starMaterial.color.setHSV(classM, 1.0, 1.0);
 			starColor = classM;
 		}else if(starType == "K"){
-			//starMaterial.color.setHSV(classK, 1.0, 1.0);
 			starColor = classK;
 		}else if(starType == "G"){
-			//starMaterial.color.setHSV(classG, 1.0, 1.0);
 			starColor = classG;
 		}else if(starType == "F"){
-			//starMaterial.color.setHSV(classF, 1.0, 1.0);
 			starColor = classF;
 		}else if(starType == "A"){
-			//starMaterial.color.setHSV(classA, 1.0, 1.0);
 			starColor = classA;
 		}else if(starType == "B"){
-			//starMaterial.color.setHSV(classB, 1.0, 1.0);
 			starColor = classB;
 		}else if(starType == "O"){
-			//starMaterial.color.setHSV(classO, 1.0, 1.0);
 			starColor = classO;
 		}
 		
 		//DEV: I am not sure how I feel about a particle system for everthing
-		//DEV: It could slow things down a lot
+		//DEV: It could slow things down a lot and hard to be selected
 		
 		//TODO: Is there a better name for this?
 		//var particleStarSystem = new THREE.ParticleSystem(this.geometry,starMaterial);
 		var sphereGeo = new THREE.SphereGeometry( 3, 8, 8 );
 		var sphere = new THREE.Mesh( sphereGeo, new THREE.MeshBasicMaterial( { color: starColor } ) );
+		sphere.name = i;
 		sphere.position.x = starData.x;
 		sphere.position.y = starData.y;
 		sphere.position.z = starData.z;
+
 		//Add to sceen
 		//this.scene.add(particleStarSystem);
 		this.scene.add(sphere);
@@ -408,6 +431,14 @@ StarBurst.prototype.init = function(){
 }	
 
 /**
+* Will update the star info in the starinfo container
+* @param data - The data of an star from the JSONArr
+* 
+*/
+StarBurst.prototype.updateStarInfo = function(data){
+	$('.star').text(data.name);
+}
+/**
 * Will make the stars from the Json Data once it is loaded
 * @return Nothing
 */
@@ -435,13 +466,10 @@ StarBurst.prototype.render = function(){
 	
 	//TODO: Also have these be options
 	
-	//
-	this.camera.position.x = Math.sin(this.cameraMovement.x) * 400;
-	this.camera.position.y = Math.sin(this.cameraMovement.y) * 400;
-	this.camera.position.z = Math.cos(this.cameraMovement.x) * 400;
-	
-	//console.log(this.cameraMovement.x+"-"+this.cameraMovement.y+"-"+this.cameraMovement.z);
-	
+	this.camera.position.x = Math.sin(this.cameraMovement.x) * this.distance;
+	this.camera.position.y = Math.sin(this.cameraMovement.y) * this.distance
+	this.camera.position.z = Math.cos(this.cameraMovement.x) * this.distance
+		
 	this.cameraMovement.x += this.offsetX/20;
 	this.cameraMovement.y +=  this.offsetY/20;
 	this.cameraMovement.z +=  this.offsetX/20;
