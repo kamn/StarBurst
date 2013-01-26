@@ -50,13 +50,13 @@ var StarBurst = function(JSONArr){
 	this.lineWidth = 0.01;
 	this.mouseDown = false;
 
-	if(JSONArr == null || JSONArr == undefined){
+	if(JSONArr === null || JSONArr === undefined){
 		this.JSONArr = null;
 	}else{
 		this.JSONArr = JSONArr;
 	}
 
-	this.starFile = "star.png"
+	this.starFile = "star.png";
 	this.offsetX = 0;
 	this.offsetY = 0;
 	this.offsetSpeedX = 0;
@@ -66,7 +66,7 @@ var StarBurst = function(JSONArr){
 	this.distance = 400;
 
 	this.focusPoint = new THREE.Vector3(0,0,0);
-}
+};
 
 /**
 * A function that when given the type of a star wil give back the color information for that star
@@ -76,7 +76,7 @@ var StarBurst = function(JSONArr){
 StarBurst.prototype.getStarTypeColorData = function(type){
 	//TODO: Implment
 
-}
+};
 
 /**
 * Will process the keypress one of several different ways
@@ -88,24 +88,25 @@ StarBurst.prototype.keyPressed = function(e){
 	var charCode = e.charCode;
 
 	//Check to see if 's' was pressed to stop the rotation
-	if(charCode == 115 || charCode == 83){
+	if(charCode === 115 || charCode === 83){
 		this.offsetX = 0;
 		this.offsetY = 0;
 	}
 
 	//Checks '+' or '=' and zooms in
-	if(charCode == 45 || charCode == 95){
+	if(charCode === 45 || charCode === 95){
 		this.distance += 2;
 	}
 
 	//Checks '-' or '_' and zooms out
-	if(charCode == 61 || charCode == 43){
+	if(charCode === 61 || charCode === 43){
 		this.distance -= 2;
 	}
 
 	//For debugging
 	//console.log(e);
-}
+};
+
 /**
 * Will calculate the drag and check to see if the user has clicked on anything
 * @param e - An event from the mouseDown
@@ -143,17 +144,18 @@ StarBurst.prototype.onMouseDown = function(e){
 	if ( intersects.length > 0 ) {
 
 		//Getting the first selected object
-        INTERSECTED = intersects[ 0 ].object;
-        
-        //Confirm that if you ARE selecting the plane select something else
-        if(intersects[0].object.name === "Plane" && intersects.length > 1){
-        	INTERSECTED = intersects[ 1 ].object;
-        }
+		INTERSECTED = intersects[ 0 ].object;
 
-        // This is redundant but it might be used for other objects
-        if(INTERSECTED.name !== "Plane"){
+		//Confirm that if you ARE selecting the plane select something else
+		if(intersects[0].object.name === "Plane" && intersects.length > 1){
+			INTERSECTED = intersects[ 1 ].object;
+		}
 
-        	//INTERSECTED.name
+		// This is redundant but it might be used for other objects
+		if(INTERSECTED.name !== "Plane"){
+
+			//TODO: Cleaner Parameters
+			//INTERSECTED.name
 			console.log("you clicked particle named '" + this.JSONArr[parseInt(INTERSECTED.name)].name + "' with id: " + INTERSECTED.id);
 
 
@@ -176,8 +178,7 @@ StarBurst.prototype.onMouseDown = function(e){
 			console.log(INTERSECTED);
 		}
 	}
-	
-}
+};
 
 /**
 *
@@ -212,7 +213,7 @@ StarBurst.prototype.onMouseMove = function(e){
 		this.offsetX = offsetX;
 		this.offsetY = offsetY;
 	}
-}
+};
 
 /**
 * This will be mainly to update the x and y mouse coordiates and not much else
@@ -245,7 +246,7 @@ StarBurst.prototype.loadJSON = function(file){
 
 
 	});
-}
+};
 
 //TODO: Have it take a parameter object
 /**
@@ -272,54 +273,54 @@ StarBurst.prototype.init = function(){
 
 	//Start the Three.Scene
 	this.scene = new THREE.Scene();
-	
+
 	//TODO: Look at the documentation for the camera more
 	//TODO: Have more options for this
 	this.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-	
+
 	//TODO: This should be a position
 	this.camera.position.z = 400;
-	
+
 	this.scene.add(this.camera);
-	
+
 	//TODO: Have option for using a plane at all
-	
+
 	this.geometry = new THREE.PlaneGeometry(this.planeWidth, this.planeHeight, this.numOfGrids, this.numOfGrids);
-	
+
 	//TODO: Have more options
 	var planeMaterial = new THREE.MeshBasicMaterial( { color: this.planeColor, wireframe: true } );
-	
+
 	var planeMesh = new THREE.Mesh(this.geometry,planeMaterial);
-	
+
 	planeMesh.doubleSided = true;
 	planeMesh.name = 'Plane';
 
 	//Add the plane to the scene
 	this.scene.add(planeMesh);
-    
 
-    //
-    var light = new THREE.DirectionalLight( 0xffffff, 2 );
+
+	//
+	var light = new THREE.DirectionalLight( 0xffffff, 2 );
 	light.position.set( 1, 1, 1 ).normalize();
 	this.scene.add( light );
-    //Maybe use the example file 
-    //TODO: Load from JSON file
-    var light = new THREE.DirectionalLight( 0xffffff );
+	//Maybe use the example file 
+	//TODO: Load from JSON file
+	var light = new THREE.DirectionalLight( 0xffffff );
 	light.position.set( -1, -1, -1 ).normalize();
 	this.scene.add( light );
-    
-    //TODO: Maybe there is a better name
-    var starMaterial = null;
-    
-    //Currently I am not using any images but for the highlighting I might need to
-    //TODO: Rename star2.png
-    //TODO: Have the location be an option
-    var sprite = THREE.ImageUtils.loadTexture(this.starFile);
-        
-    var JSONArr = this.JSONArr;
-    
-    var tempGeo = new THREE.Geometry();
-    //TODO: Separete into function
+
+	//TODO: Maybe there is a better name
+	var starMaterial = null;
+
+	//Currently I am not using any images but for the highlighting I might need to
+	//TODO: Rename star2.png
+	//TODO: Have the location be an option
+	var sprite = THREE.ImageUtils.loadTexture(this.starFile);
+	    
+	var JSONArr = this.JSONArr;
+
+	var tempGeo = new THREE.Geometry();
+	//TODO: Separete into function
 	for(i = 0;i < JSONArr.length;i++){
 		
 		var starData = JSONArr[i];
@@ -334,77 +335,77 @@ StarBurst.prototype.init = function(){
 		
 		if(this.linesToStars){
 
-    		var lineGeometry = new THREE.Geometry();
-    		
-    		var newVertexY = starVertex.y;
+			var lineGeometry = new THREE.Geometry();
+			
+			var newVertexY = starVertex.y;
 
-    		if(newVertexY > 0){
-    			newVertexY -= 3;
-    		}else{
-    			newVertexY += 3;
-    		}
+			if(newVertexY > 0){
+				newVertexY -= 3;
+			}else{
+				newVertexY += 3;
+			}
 
-    		//Due to the nature of the diffference between how we standardly think of...
-    		//3D cooridinates and how WebGL uses it this is needed
-    		//TODO: Add the correct points
-    		lineGeometry.vertices.push(new THREE.Vector3(starVertex.x,newVertexY,starVertex.z));
-    		lineGeometry.vertices.push(new THREE.Vector3(starVertex.x,0,starVertex.z));
-    		
+			//Due to the nature of the diffference between how we standardly think of...
+			//3D cooridinates and how WebGL uses it this is needed
+			//TODO: Add the correct points
+			lineGeometry.vertices.push(new THREE.Vector3(starVertex.x,newVertexY,starVertex.z));
+			lineGeometry.vertices.push(new THREE.Vector3(starVertex.x,0,starVertex.z));
+			
 
-    		//TODO: Make some into variables
-    		var lineMaterial = new THREE.LineBasicMaterial({color:0x555555, linewidth: 0.01});
-    		var line = new THREE.Line(lineGeometry,lineMaterial);
-    		this.scene.add(line);
-    	
-    	}
+			//TODO: Make some into variables
+			var lineMaterial = new THREE.LineBasicMaterial({color:0x555555, linewidth: 0.01});
+			var line = new THREE.Line(lineGeometry,lineMaterial);
+			this.scene.add(line);
+		
+		}
 
-    	//The location the star will appear at
-    	this.geometry.vertices.push(starVertex);
-    	tempGeo.vertices.push(starVertex);
+		//The location the star will appear at
+		this.geometry.vertices.push(starVertex);
+		tempGeo.vertices.push(starVertex);
 
-    	//TODO:
-    	var size = 10;
-    	
-    	//DEV: Figure out what the options are for ParticleBasciMaterial
-    	//TODO: There should be a lot of Options here
-    	starMaterial = new THREE.ParticleBasicMaterial({ size: size, 
+		//TODO:
+		var size = 10;
+		
+		//DEV: Figure out what the options are for ParticleBasciMaterial
+		//TODO: There should be a lot of Options here
+		starMaterial = new THREE.ParticleBasicMaterial({ size: size, 
 			map: sprite,
 			blending: THREE.AdditiveBlending,
 			depthTest: false,
 			//transparent: true,
 			//vertexColors: true
 		});
-  	
-    	//TODO: Put into a sort of ENUM or Object
-    	var classM = 0xFF4719;
-    	var classK = 0xFFCC00;
-    	var classG = 0xE6E600;
-    	var classF = 0xFFFFCC;
-    	var classA = 0xBDCEFF;
-    	var classB = 0xA6BBFF;
-    	var classO = 0x9DB4FF;
-    	
-    	//Get the starType
-    	var starType = starData.type;
+		
+		//TODO: Put into a sort of ENUM or Object
+		var classM = 0xFF4719;
+		var classK = 0xFFCC00;
+		var classG = 0xE6E600;
+		var classF = 0xFFFFCC;
+		var classA = 0xBDCEFF;
+		var classB = 0xA6BBFF;
+		var classO = 0x9DB4FF;
+		
+		//Get the starType
+		var starType = starData.type;
 
-    	//A default color
-    	var starColor = classM;
+		//A default color
+	var starColor = classM;
 
-    	
-    	//TODO: I don't like this way of doing things...
-    	if(starType == "M"){
+		
+		//TODO: I don't like this way of doing things...
+		if(starType === "M"){
 			starColor = classM;
-		}else if(starType == "K"){
+		}else if(starType === "K"){
 			starColor = classK;
-		}else if(starType == "G"){
+		}else if(starType === "G"){
 			starColor = classG;
-		}else if(starType == "F"){
+		}else if(starType === "F"){
 			starColor = classF;
-		}else if(starType == "A"){
+		}else if(starType === "A"){
 			starColor = classA;
-		}else if(starType == "B"){
+		}else if(starType === "B"){
 			starColor = classB;
-		}else if(starType == "O"){
+		}else if(starType === "O"){
 			starColor = classO;
 		}
 		
@@ -424,28 +425,28 @@ StarBurst.prototype.init = function(){
 		//this.scene.add(particleStarSystem);
 		this.scene.add(sphere);
 		
-    }
-    //var particleStarSystem = new THREE.ParticleSystem(tempGeo,starMaterial);
+	}
+	//var particleStarSystem = new THREE.ParticleSystem(tempGeo,starMaterial);
 		
 	//Add to sceen
 	//this.scene.add(particleStarSystem);
 
-    
-    //TODO: This needs to be an option Use WebGL or Canvas with options for each
-    this.renderer = new THREE.WebGLRenderer({alpha:0});
-    
-    //TODO: These need to be options
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    
-    //TODO: option of speficiying a element to attach to...?
-    //Attach to the body of the document
-    container.appendChild(this.renderer.domElement);
-    
-    console.log(this.scene);
-    console.log(this.camera);
-    console.log(THREE.RenderPass);
-    /*var renderModel = new THREE.RenderPass(this.scene, this.camera);
-    /*var renderModel = new THREE.RenderPass( this.scene, this.camera );
+
+	//TODO: This needs to be an option Use WebGL or Canvas with options for each
+	this.renderer = new THREE.WebGLRenderer({alpha:0});
+
+	//TODO: These need to be options
+	this.renderer.setSize(window.innerWidth, window.innerHeight);
+
+	//TODO: option of speficiying a element to attach to...?
+	//Attach to the body of the document
+	container.appendChild(this.renderer.domElement);
+
+	console.log(this.scene);
+	console.log(this.camera);
+	console.log(THREE.RenderPass);
+	/*var renderModel = new THREE.RenderPass(this.scene, this.camera);
+	/*var renderModel = new THREE.RenderPass( this.scene, this.camera );
 	/*var effectBloom = new THREE.BloomPass( 1.3 );
 	var effectScreen = new THREE.ShaderPass( THREE.ShaderExtras[ "screen" ] );
 
@@ -466,8 +467,8 @@ StarBurst.prototype.init = function(){
 	composer.addPass( effectScreen );*/
 
 
-    //TODO: Add as option
-    //Attach listener(s)
+	//TODO: Add as option
+	//Attach listener(s)
 	document.addEventListener('mousedown',this.onMouseDown.bind(this),false);
 	document.addEventListener('mousemove',this.onMouseMove.bind(this),false);
 	document.addEventListener('mouseup',this.onMouseUp.bind(this),false);
