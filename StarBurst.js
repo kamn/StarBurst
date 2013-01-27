@@ -1,3 +1,8 @@
+
+/*global THREE: false*/
+/*global console: false*/
+/*global $: false*/
+/*global requestAnimationFrame: false*/
 /**
 Copyright 2012 Samuel Miller
 
@@ -31,6 +36,7 @@ var mouse = {x:0,y:0};
 *
 */
 var StarBurst = function(JSONArr){
+	"use strict";
 	this.camera = null;
 	this.scene = null;
 	this.renderer = null;
@@ -75,6 +81,7 @@ var StarBurst = function(JSONArr){
 */
 StarBurst.prototype.getStarTypeColorData = function(type){
 	//TODO: Implment
+	"use strict";
 
 };
 
@@ -84,7 +91,7 @@ StarBurst.prototype.getStarTypeColorData = function(type){
 * @return Nothing
 */
 StarBurst.prototype.keyPressed = function(e){
-
+	"use strict";
 	var charCode = e.charCode;
 
 	//Check to see if 's' was pressed to stop the rotation
@@ -113,6 +120,7 @@ StarBurst.prototype.keyPressed = function(e){
 * @return Nothing
 */
 StarBurst.prototype.onMouseDown = function(e){
+	"use strict";
 	e.preventDefault();
 	
 	this.mouseDown = true;
@@ -144,7 +152,7 @@ StarBurst.prototype.onMouseDown = function(e){
 	if ( intersects.length > 0 ) {
 
 		//Getting the first selected object
-		INTERSECTED = intersects[ 0 ].object;
+		var INTERSECTED = intersects[ 0 ].object;
 
 		//Confirm that if you ARE selecting the plane select something else
 		if(intersects[0].object.name === "Plane" && intersects.length > 1){
@@ -156,7 +164,7 @@ StarBurst.prototype.onMouseDown = function(e){
 
 			//TODO: Cleaner Parameters
 			//INTERSECTED.name
-			console.log("you clicked particle named '" + this.JSONArr[parseInt(INTERSECTED.name)].name + "' with id: " + INTERSECTED.id);
+			//console.log("you clicked particle named '" + this.JSONArr[parseInt(INTERSECTED.name, 10)].name + "' with id: " + INTERSECTED.id);
 
 
 			//INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
@@ -164,7 +172,7 @@ StarBurst.prototype.onMouseDown = function(e){
 
 			//TODO: Put this into a function
 			
-			this.updateStarInfo(this.JSONArr[parseInt(INTERSECTED.name)]);
+			this.updateStarInfo(this.JSONArr[parseInt(INTERSECTED.name, 10)]);
 
 			//TODO: Redo the camera position
 			//TODO: Also do a tweet
@@ -186,7 +194,7 @@ StarBurst.prototype.onMouseDown = function(e){
 * @return Nothing
 */
 StarBurst.prototype.onMouseMove = function(e){
-	
+	"use strict";
 	//
 	if(this.mouseDown){
 		
@@ -221,6 +229,7 @@ StarBurst.prototype.onMouseMove = function(e){
 * @return Nothing
 */
 StarBurst.prototype.onMouseUp = function(e){
+	"use strict";
 	e.preventDefault();
 	
 	//DEV: Just to check that the mouse is working
@@ -232,7 +241,7 @@ StarBurst.prototype.onMouseUp = function(e){
 	this.mouse.x = e.clientX;
 	this.mouse.y = e.clientY;
 	
-}
+};
 
 /**
 * Will load a JSON file of star data 
@@ -240,7 +249,7 @@ StarBurst.prototype.onMouseUp = function(e){
 * @return a JSON Array
 */
 StarBurst.prototype.loadJSON = function(file){
-	
+	"use strict";	
 
 	$.getJSON(file,function(data){
 
@@ -254,10 +263,11 @@ StarBurst.prototype.loadJSON = function(file){
 * @return Nothing
 */
 StarBurst.prototype.init = function(){
-	container = document.createElement( 'div' );
+	"use strict";
+	var container = document.createElement( 'div' );
 	document.body.appendChild( container );
 
-	starInfoDiv = document.createElement( 'div' );
+	var starInfoDiv = document.createElement( 'div' );
 	starInfoDiv.style.position = "absolute";
 	starInfoDiv.style.top = "10px";
 	starInfoDiv.className = "info";
@@ -265,10 +275,10 @@ StarBurst.prototype.init = function(){
 	container.appendChild(starInfoDiv);
 
 
-	starNameDiv = document.createElement( 'div' );
+	var starNameDiv = document.createElement( 'div' );
 	starNameDiv.style.position = "absolute";
-	starNameDiv.className = "starName"
-	starNameDiv.innerHTML = "<strong>Star Name</strong><p class='star'>None</p>"
+	starNameDiv.className = "starName";
+	starNameDiv.innerHTML = "<strong>Star Name</strong><p class='star'>None</p>";
 	container.appendChild(starNameDiv);
 
 	//Start the Three.Scene
@@ -305,7 +315,7 @@ StarBurst.prototype.init = function(){
 	this.scene.add( light );
 	//Maybe use the example file 
 	//TODO: Load from JSON file
-	var light = new THREE.DirectionalLight( 0xffffff );
+	light = new THREE.DirectionalLight( 0xffffff );
 	light.position.set( -1, -1, -1 ).normalize();
 	this.scene.add( light );
 
@@ -316,12 +326,12 @@ StarBurst.prototype.init = function(){
 	//TODO: Rename star2.png
 	//TODO: Have the location be an option
 	var sprite = THREE.ImageUtils.loadTexture(this.starFile);
-	    
+	
 	var JSONArr = this.JSONArr;
 
 	var tempGeo = new THREE.Geometry();
 	//TODO: Separete into function
-	for(i = 0;i < JSONArr.length;i++){
+	for(var i = 0;i < JSONArr.length;i++){
 		
 		var starData = JSONArr[i];
 	
@@ -348,8 +358,8 @@ StarBurst.prototype.init = function(){
 			//Due to the nature of the diffference between how we standardly think of...
 			//3D cooridinates and how WebGL uses it this is needed
 			//TODO: Add the correct points
-			lineGeometry.vertices.push(new THREE.Vector3(starVertex.x,newVertexY,starVertex.z));
-			lineGeometry.vertices.push(new THREE.Vector3(starVertex.x,0,starVertex.z));
+			lineGeometry.vertices.push(new THREE.Vector3(starVertex.x, newVertexY, starVertex.z));
+			lineGeometry.vertices.push(new THREE.Vector3(starVertex.x, 0, starVertex.z));
 			
 
 			//TODO: Make some into variables
@@ -371,7 +381,7 @@ StarBurst.prototype.init = function(){
 		starMaterial = new THREE.ParticleBasicMaterial({ size: size, 
 			map: sprite,
 			blending: THREE.AdditiveBlending,
-			depthTest: false,
+			depthTest: false
 			//transparent: true,
 			//vertexColors: true
 		});
@@ -475,7 +485,7 @@ StarBurst.prototype.init = function(){
 	document.addEventListener('keypress',this.keyPressed.bind(this), true);
 
 
-}	
+};
 
 /**
 * Will update the star info in the starinfo container
@@ -483,14 +493,15 @@ StarBurst.prototype.init = function(){
 * 
 */
 StarBurst.prototype.updateStarInfo = function(data){
+	"use strict";
 	$('.star').text(data.name);
-}
+};
 /**
 * Will make the stars from the Json Data once it is loaded
 * @return Nothing
 */
 StarBurst.prototype.constructFromJSONArr = function(){
-
+	"use strict";
 	if(this.JSONLoaded === true){
 
 
@@ -507,7 +518,7 @@ StarBurst.prototype.constructFromJSONArr = function(){
 * @return Nothing
 */
 StarBurst.prototype.render = function(){
-
+	"use strict";
 	
 	//Setting up of rpicking
 	
@@ -527,7 +538,7 @@ StarBurst.prototype.render = function(){
 
 	//Render
 	this.renderer.render(this.scene, this.camera);
-}
+};
 
 
 
@@ -543,4 +554,4 @@ StarBurst.prototype.animate = function(){
 	
 	//Render scene
 	this.render();
-}
+};
