@@ -190,7 +190,7 @@ StarBurst.prototype.onMouseDown = function(e){
 
 /**
 *
-* @param e -
+* @param e - An event
 * @return Nothing
 */
 StarBurst.prototype.onMouseMove = function(e){
