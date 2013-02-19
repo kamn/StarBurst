@@ -1,4 +1,3 @@
-
 /*global THREE: false*/
 /*global console: false*/
 /*global $: false*/
@@ -27,6 +26,7 @@ Copyright 2012 Samuel Miller
 /*===INIT===*/
 
 //var camera, scene, renderer, geometry, material, mesh;
+//represents the mouse on the screen
 var mouse = {x:0,y:0};
 
 /*===Functions===*/
@@ -190,7 +190,7 @@ StarBurst.prototype.onMouseDown = function(e){
 
 /**
 *
-* @param e -
+* @param e - An event
 * @return Nothing
 */
 StarBurst.prototype.onMouseMove = function(e){
